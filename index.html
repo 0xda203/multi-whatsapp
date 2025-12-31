@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Multi WhatsApp</title>
+  </head>
+  <body>
+    <div id="sidebar">
+      <div id="sidebar-header">Accounts</div>
+      <div id="sidebar-tabs"></div>
+    </div>
+    <div id="main-content">
+      <div id="chrome-bar">
+        <div id="tab-bar">
+          <div id="sidebar-toggle">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+            </svg>
+          </div>
+          <div id="tabs"></div>
+          <div id="new-tab">
+            <svg viewBox="0 0 24 24">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+          </div>
+          <div id="gap"></div>
+          <div id="window-buttons">
+            <div id="btn-minimize">
+              <svg viewBox="0 0 12 12" fill="currentColor">
+                <rect y="5" width="12" height="1"/>
+              </svg>
+            </div>
+            <div id="btn-maximize">
+              <svg viewBox="0 0 12 12" fill="currentColor">
+                <rect x="1" y="1" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1"/>
+              </svg>
+            </div>
+            <div id="btn-close" class="close">
+              <svg viewBox="0 0 12 12" fill="currentColor">
+                <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="./src/renderer.js"></script>
+  </body>
+</html>

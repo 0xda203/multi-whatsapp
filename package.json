@@ -1,0 +1,47 @@
+{
+  "name": "multi-whatsapp",
+  "productName": "Multi WhatsApp",
+  "version": "1.0.0",
+  "description": "Desktop application to manage multiple WhatsApp accounts simultaneously with isolated sessions",
+  "main": ".vite/build/main.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish"
+  },
+  "keywords": [
+    "whatsapp",
+    "multi-account",
+    "electron",
+    "desktop",
+    "messaging",
+    "whatsapp-web"
+  ],
+  "author": "0xda203",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/0xda203/multi-whatsapp"
+  },
+  "bugs": {
+    "url": "https://github.com/0xda203/multi-whatsapp/issues"
+  },
+  "homepage": "https://github.com/0xda203/multi-whatsapp#readme",
+  "devDependencies": {
+    "@electron-forge/cli": "^7.10.2",
+    "@electron-forge/maker-deb": "^7.10.2",
+    "@electron-forge/maker-rpm": "^7.10.2",
+    "@electron-forge/maker-squirrel": "^7.10.2",
+    "@electron-forge/maker-zip": "^7.10.2",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.10.2",
+    "@electron-forge/plugin-fuses": "^7.10.2",
+    "@electron-forge/plugin-vite": "^7.10.2",
+    "@electron/fuses": "^1.8.0",
+    "electron": "39.2.7",
+    "vite": "^5.4.21"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1"
+  }
+}
