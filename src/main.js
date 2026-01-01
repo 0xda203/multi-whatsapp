@@ -2,6 +2,7 @@ import { app, BrowserWindow, BrowserView, ipcMain, nativeTheme, Menu, nativeImag
 import path from 'node:path';
 import fs from 'node:fs';
 import started from 'electron-squirrel-startup';
+import { t } from './i18n/index.js'; 
 
 if (started) app.quit();
 
@@ -113,15 +114,15 @@ const createWindow = () => {
 
   const menuTemplate = [
     {
-      label: 'File',
+      label: t('file'),
       submenu: [
-        { role: 'quit' }, // Ctrl+Q
-        { role: 'close' } // Ctrl+W
+        { label: t('quit'), role: 'quit' }, // Ctrl+Q
+        { label: t('close'), role: 'close' } // Ctrl+W
       ]
     },
-    { role: 'editMenu' },
-    { role: 'viewMenu' },
-    { role: 'windowMenu' }
+    { label: t('edit'), role: 'editMenu' },
+    { label: t('view'), role: 'viewMenu' },
+    { label: t('window'), role: 'windowMenu' }
   ];
   const menu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menu);
@@ -139,12 +140,12 @@ const createWindow = () => {
 
     dialog.showMessageBox(mainWindow, {
       type: 'question',
-      buttons: ['Yes', 'No'],
+      buttons: [t('yes'), t('no')],
       defaultId: 0,
       cancelId: 1,
-      title: 'Confirm',
-      message: 'Are you sure you want to close the application?',
-      checkboxLabel: 'Do not ask me again',
+      title: t('confirmTitle'),
+      message: t('confirmMessage'),
+      checkboxLabel: t('dontAsk'),
       checkboxChecked: false,
     }).then(({ response, checkboxChecked }) => {
       if (response === 0) { // User clicked 'Yes'
@@ -152,7 +153,7 @@ const createWindow = () => {
           // Update settings to not ask again
           saveSettings({ confirmOnClose: false });
         }
-        
+
         // Set flag to true so the next close event passes through
         isQuitting = true;
         app.quit();
@@ -404,10 +405,10 @@ ipcMain.on('show-context-menu', (event, tabId) => {
   if (!tab) return;
 
   const template = [
-    { label: 'Rename', click: () => mainWindow.webContents.send('start-rename', tabId) },
-    { label: 'Refresh', click: () => refreshTab(tabId) },
+    { label: t('rename'), click: () => mainWindow.webContents.send('start-rename', tabId) },
+    { label: t('refresh'), click: () => refreshTab(tabId) },
     {
-      label: tab.muted ? 'Unmute' : 'Mute',
+      label: tab.muted ? t('unmute') : t('mute'),
       click: () => {
         tab.muted = !tab.muted;
         tab.view.webContents.setAudioMuted(tab.muted);
@@ -417,9 +418,9 @@ ipcMain.on('show-context-menu', (event, tabId) => {
         updateTotalUnread();
       }
     },
-    { label: 'Clear Session', click: () => clearTab(tabId) },
+    { label: t('clearSession'), click: () => clearTab(tabId) },
     { type: 'separator' },
-    { label: 'Close Tab', click: () => closeTab(tabId) }
+    { label: t('closeTab'), click: () => closeTab(tabId) }
   ];
 
   Menu.buildFromTemplate(template).popup({ window: BrowserWindow.fromWebContents(event.sender) });

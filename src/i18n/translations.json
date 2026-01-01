@@ -1,0 +1,40 @@
+{
+  "en": {
+    "file": "File",
+    "quit": "Quit",
+    "close": "Close",
+    "edit": "Edit",
+    "view": "View",
+    "window": "Window",
+    "rename": "Rename",
+    "refresh": "Refresh",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "clearSession": "Clear Session",
+    "closeTab": "Close Tab",
+    "confirmTitle": "Confirm",
+    "confirmMessage": "Are you sure you want to close the application?",
+    "yes": "Yes",
+    "no": "No",
+    "dontAsk": "Do not ask me again"
+  },
+  "pt": {
+    "file": "Arquivo",
+    "quit": "Sair",
+    "close": "Fechar",
+    "edit": "Editar",
+    "view": "Exibir",
+    "window": "Janela",
+    "rename": "Renomear",
+    "refresh": "Recarregar",
+    "mute": "Silenciar",
+    "unmute": "Ativar Som",
+    "clearSession": "Limpar Sessão",
+    "closeTab": "Fechar Aba",
+    "confirmTitle": "Confirmação",
+    "confirmMessage": "Tem certeza que deseja fechar o aplicativo?",
+    "yes": "Sim",
+    "no": "Não",
+    "dontAsk": "Não perguntar novamente"
+  }
+}
