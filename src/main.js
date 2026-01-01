@@ -1,4 +1,4 @@
-import { app, BrowserWindow, BrowserView, ipcMain, nativeTheme, Menu, nativeImage, shell } from 'electron';
+import { app, BrowserWindow, BrowserView, ipcMain, nativeTheme, Menu, nativeImage, shell, dialog } from 'electron';
 import path from 'node:path';
 import fs from 'node:fs';
 import started from 'electron-squirrel-startup';
@@ -11,8 +11,12 @@ let mainWindow;
 let tabs = [];
 let activeTabId = null;
 let sidebarWidth = 0;
+
+let isQuitting = false; 
+
 const TAB_BAR_HEIGHT = 42;
 const dataPath = path.join(app.getPath('userData'), 'tabs.json');
+const settingsPath = path.join(app.getPath('userData'), 'settings.json');
 
 function loadSavedData() {
   try {
@@ -41,6 +45,19 @@ function saveData() {
     }))
   };
   fs.writeFileSync(dataPath, JSON.stringify(data));
+}
+
+function loadSettings() {
+  try {
+    if (fs.existsSync(settingsPath)) {
+      return JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+    }
+  } catch (e) { }
+  return { confirmOnClose: true };
+}
+
+function saveSettings(settings) {
+  fs.writeFileSync(settingsPath, JSON.stringify(settings));
 }
 
 function updateAllTabBounds() {
@@ -92,6 +109,56 @@ const createWindow = () => {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
+  });
+
+  const menuTemplate = [
+    {
+      label: 'File',
+      submenu: [
+        { role: 'quit' }, // Ctrl+Q
+        { role: 'close' } // Ctrl+W
+      ]
+    },
+    { role: 'editMenu' },
+    { role: 'viewMenu' },
+    { role: 'windowMenu' }
+  ];
+  const menu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(menu);
+
+  mainWindow.on('close', (e) => {
+    // If we are already in the process of quitting, or settings say don't ask
+    const settings = loadSettings();
+    
+    if (isQuitting || !settings.confirmOnClose) {
+      return; // Proceed with closing
+    }
+
+    // Prevent default close
+    e.preventDefault();
+
+    dialog.showMessageBox(mainWindow, {
+      type: 'question',
+      buttons: ['Yes', 'No'],
+      defaultId: 0,
+      cancelId: 1,
+      title: 'Confirm',
+      message: 'Are you sure you want to close the application?',
+      checkboxLabel: 'Do not ask me again',
+      checkboxChecked: false,
+    }).then(({ response, checkboxChecked }) => {
+      if (response === 0) { // User clicked 'Yes'
+        if (checkboxChecked) {
+          // Update settings to not ask again
+          saveSettings({ confirmOnClose: false });
+        }
+        
+        // Set flag to true so the next close event passes through
+        isQuitting = true;
+        app.quit();
+      }
+      // If response === 1 (No), we do nothing, preventing the close.
+    });
   });
 
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
