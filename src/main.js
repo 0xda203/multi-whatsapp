@@ -1,4 +1,4 @@
-import { app, BrowserWindow, BrowserView, ipcMain, nativeTheme, Menu, nativeImage } from 'electron';
+import { app, BrowserWindow, BrowserView, ipcMain, nativeTheme, Menu, nativeImage, shell } from 'electron';
 import path from 'node:path';
 import fs from 'node:fs';
 import started from 'electron-squirrel-startup';
@@ -147,6 +147,22 @@ function createTab(existingId = null, existingName = null, existingMuted = false
       contextIsolation: true,
       preload: path.join(__dirname, 'view-preload.js'),
     },
+  });
+
+  view.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith('http:') || url.startsWith('https:')) {
+      shell.openExternal(url);
+    }
+    return { action: 'deny' };
+  });
+
+  view.webContents.on('will-navigate', (event, url) => {
+    const parsedUrl = new URL(url);
+    // If navigating away from WhatsApp Web, block it and open externally
+    if (parsedUrl.hostname !== 'web.whatsapp.com') {
+      event.preventDefault();
+      shell.openExternal(url);
+    }
   });
 
   view.webContents.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
