@@ -65,10 +65,15 @@ function saveData() {
 function loadSettings() {
   try {
     if (fs.existsSync(settingsPath)) {
-      return JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+      const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+      // Ensure we preserve existing settings while adding defaults for new ones
+      return {
+        confirmOnClose: settings.confirmOnClose !== undefined ? settings.confirmOnClose : true,
+        confirmOnTabClose: settings.confirmOnTabClose !== undefined ? settings.confirmOnTabClose : true
+      };
     }
   } catch (e) { }
-  return { confirmOnClose: true };
+  return { confirmOnClose: true, confirmOnTabClose: true };
 }
 
 function saveSettings(settings) {
@@ -378,21 +383,52 @@ function switchToPrevTab() {
 }
 
 function closeTab(tabId) {
-  const index = tabs.findIndex(t => t.id === tabId);
-  if (index !== -1) {
-    mainWindow.removeBrowserView(tabs[index].view);
-    tabs[index].view.webContents.destroy();
-    tabs.splice(index, 1);
+  const settings = loadSettings();
 
-    if (tabs.length > 0 && activeTabId === tabId) {
-      switchTab(tabs[Math.max(0, index - 1)].id);
+  const doClose = () => {
+    const index = tabs.findIndex(t => t.id === tabId);
+    if (index !== -1) {
+      mainWindow.removeBrowserView(tabs[index].view);
+      tabs[index].view.webContents.destroy();
+      tabs.splice(index, 1);
+
+      if (tabs.length > 0 && activeTabId === tabId) {
+        switchTab(tabs[Math.max(0, index - 1)].id);
+      }
+
+      recalculateTabNames();
+      saveData();
+      updateTotalUnread();
     }
+    mainWindow.webContents.send('tab-closed', tabId);
+  };
 
-    recalculateTabNames();
-    saveData();
-    updateTotalUnread();
+  // If the user has checked "Do not ask again", close immediately
+  if (!settings.confirmOnTabClose) {
+    doClose();
+    return;
   }
-  mainWindow.webContents.send('tab-closed', tabId);
+
+  // Show the confirmation dialog
+  dialog.showMessageBox(mainWindow, {
+    type: 'warning',
+    buttons: [t('yes'), t('no')],
+    defaultId: 1, // Default to "No" to prevent accidents
+    cancelId: 1,
+    title: t('confirmTabCloseTitle'),
+    message: t('confirmTabCloseMessage'),
+    detail: t('confirmTabCloseDetail'),
+    checkboxLabel: t('dontAsk'),
+    checkboxChecked: false,
+  }).then(({ response, checkboxChecked }) => {
+    if (response === 0) { // User clicked 'Yes'
+      if (checkboxChecked) {
+        // Save the preference to not ask again
+        saveSettings({ ...settings, confirmOnTabClose: false });
+      }
+      doClose();
+    }
+  });
 }
 
 function clearTab(tabId) {

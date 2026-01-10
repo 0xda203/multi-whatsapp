@@ -16,7 +16,10 @@
     "confirmMessage": "Are you sure you want to close the application?",
     "yes": "Yes",
     "no": "No",
-    "dontAsk": "Do not ask me again"
+    "dontAsk": "Do not ask me again",
+    "confirmTabCloseTitle": "Close Account?",
+    "confirmTabCloseMessage": "Are you sure you want to remove this account?",
+    "confirmTabCloseDetail": "This will close the tab. You might need to unlink this device from your phone manually."
   },
   "pt": {
     "file": "Arquivo",
@@ -35,6 +38,9 @@
     "confirmMessage": "Tem certeza que deseja fechar o aplicativo?",
     "yes": "Sim",
     "no": "Não",
-    "dontAsk": "Não perguntar novamente"
+    "dontAsk": "Não perguntar novamente",
+    "confirmTabCloseTitle": "Fechar Conta?",
+    "confirmTabCloseMessage": "Tem certeza que deseja remover esta conta?",
+    "confirmTabCloseDetail": "Isso fechará a aba. Você pode precisar desvincular este dispositivo do seu celular manualmente."
   }
 }
