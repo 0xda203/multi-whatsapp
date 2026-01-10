@@ -289,25 +289,6 @@ body[data-theme="light"] .tab-container.active .tab::after {
   color: var(--text-primary);
 }
 
-.tab .title:before {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
-  box-shadow: inset -18px 0 18px -18px var(--bg-primary);
-  content: "";
-  transition: box-shadow 0.15s;
-}
-
-.tab-container:hover .tab .title:before {
-  box-shadow: inset -18px 0 18px -18px var(--bg-hover);
-}
-
-.tab-container.active .tab .title:before {
-  box-shadow: inset -18px 0 18px -18px var(--bg-active);
-}
-
 .tab-rename {
   flex: 1;
   background: var(--bg-primary);
