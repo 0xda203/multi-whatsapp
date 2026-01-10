@@ -135,7 +135,49 @@ const createWindow = () => {
       ]
     },
     { label: t('edit'), role: 'editMenu' },
-    { label: t('view'), role: 'viewMenu' },
+    {
+      label: t('view'),
+      submenu: [
+        { role: 'reload' },
+        { role: 'forceReload' },
+        { role: 'toggleDevTools' },
+        { type: 'separator' },
+        {
+          label: 'Reset Zoom',
+          accelerator: 'CommandOrControl+0',
+          click: () => {
+            const tab = tabs.find(t => t.id === activeTabId);
+            if (tab && tab.view) {
+              tab.view.webContents.setZoomLevel(0);
+            }
+          }
+        },
+        {
+          label: 'Zoom In',
+          accelerator: 'CommandOrControl+=', // Fixes the Ctrl + issue
+          click: () => {
+            const tab = tabs.find(t => t.id === activeTabId);
+            if (tab && tab.view) {
+              const level = tab.view.webContents.getZoomLevel();
+              tab.view.webContents.setZoomLevel(level + 0.5);
+            }
+          }
+        },
+        {
+          label: 'Zoom Out',
+          accelerator: 'CommandOrControl+-',
+          click: () => {
+            const tab = tabs.find(t => t.id === activeTabId);
+            if (tab && tab.view) {
+              const level = tab.view.webContents.getZoomLevel();
+              tab.view.webContents.setZoomLevel(level - 0.5);
+            }
+          }
+        },
+        { type: 'separator' },
+        { role: 'togglefullscreen' }
+      ]
+    },
     { label: t('window'), role: 'windowMenu' }
   ];
   const menu = Menu.buildFromTemplate(menuTemplate);
