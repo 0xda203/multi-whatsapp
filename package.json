@@ -1,7 +1,7 @@
 {
   "name": "multi-whatsapp",
   "productName": "Multi WhatsApp",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Desktop application to manage multiple WhatsApp accounts simultaneously with isolated sessions",
   "main": ".vite/build/main.js",
   "scripts": {
