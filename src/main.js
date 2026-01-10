@@ -15,7 +15,7 @@ let sidebarWidth = 0;
 
 let isQuitting = false; 
 
-const TAB_BAR_HEIGHT = 42;
+const TAB_BAR_HEIGHT = 40;
 const dataPath = path.join(app.getPath('userData'), 'tabs.json');
 const settingsPath = path.join(app.getPath('userData'), 'settings.json');
 
