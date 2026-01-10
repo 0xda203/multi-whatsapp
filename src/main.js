@@ -359,6 +359,11 @@ function createTab(existingId = null, existingName = null, existingMuted = false
 
   recalculateTabNames();
   saveData();
+
+  // Switch to the new tab if it was created manually (not restored)
+  if (!existingId) {
+    switchTab(tabId);
+  }
 }
 
 function switchTab(tabId) {
