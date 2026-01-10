@@ -12,10 +12,13 @@ A desktop application to manage multiple WhatsApp accounts simultaneously in a s
 - **Tab Management**: Chrome-like tabs with drag-and-drop reordering
 - **Session Persistence**: Tabs and login sessions persist across restarts
 - **Custom Tab Names**: Double-click or right-click to rename tabs
+- **Tab Colors**: Right-click to assign custom colors to tabs for easy identification
 - **Native Notifications**: Uses WhatsApp Web's built-in notifications
 - **Dark/Light Mode**: Follows system theme
 - **Keyboard Shortcuts**: `Ctrl+Tab` / `Ctrl+Shift+Tab` to switch tabs / `Ctrl+'` to open/close sidebar
-- **Context Menu**: Right-click for Rename, Refresh, Clear Session, Close
+- **Context Menu**: Right-click for Rename, Refresh, Mute/Unmute, Change Color, Clear Session, Close
+- **Zoom Controls**: `Ctrl +` / `Ctrl -` / `Ctrl 0` to zoom in/out/reset the active tab
+- **Close Confirmation**: Optional confirmation dialog when closing tabs to prevent accidental session loss
 
 ## Installation
 
@@ -48,6 +51,8 @@ Output: `out/make/squirrel.windows/x64/`
 | `Ctrl+Tab` | Next tab |
 | `Ctrl+Shift+Tab` | Previous tab |
 | `Ctrl+'` | Open/Close sidebar |
+| `Ctrl +` | Zoom In (Active Tab) |
+| `Ctrl -` | Zoom Out (Active Tab) |
 
 ## Limitations
 
