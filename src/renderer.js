@@ -123,11 +123,15 @@ window.electronAPI.onStartRename((tabId) => {
   startRename(tabId);
 });
 
-function createSidebarTab(id, name, muted) {
+function createSidebarTab(id, name, muted, color) {
   const sidebarTab = document.createElement('div');
   sidebarTab.className = 'sidebar-tab';
   sidebarTab.dataset.id = id;
   sidebarTab.dataset.muted = muted;
+  if (color) {
+    sidebarTab.style.backgroundColor = color;
+    sidebarTab.style.color = '#ffffff';
+  }
   sidebarTab.innerHTML = `
     <span class="sidebar-name">${name}</span>
     <span class="sidebar-badge"></span>
@@ -145,8 +149,8 @@ function createSidebarTab(id, name, muted) {
   document.getElementById('sidebar-tabs').appendChild(sidebarTab);
 }
 
-window.electronAPI.onTabCreated(({ id, name, muted }) => {
-  createSidebarTab(id, name, muted);
+window.electronAPI.onTabCreated(({ id, name, muted, color }) => {
+  createSidebarTab(id, name, muted, color);
   
   const tabFrame = document.createElement('div');
   tabFrame.className = 'tab-frame';
@@ -155,12 +159,15 @@ window.electronAPI.onTabCreated(({ id, name, muted }) => {
   tabContainer.className = 'tab-container active';
   tabContainer.dataset.id = id;
   tabContainer.dataset.muted = muted;
+  if (color) {
+    tabContainer.dataset.color = color;
+  }
   tabContainer.draggable = true;
   tabContainer.title = name;
   
   tabContainer.innerHTML = `
-    <div class="tab">
-      <div class="title">${name}</div>
+    <div class="tab" ${color ? `style="background-color: ${color}; color: #ffffff;"` : ''}>
+      <div class="title" ${color ? 'style="color: #ffffff;"' : ''}>${name}</div>
       <div class="mute-icon" ${muted ? 'style="display:flex"' : 'style="display:none"'}>
         <svg viewBox="0 0 16 16" fill="currentColor">
            <path d="M6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06zM6 5.04 4.312 6.39A.5.5 0 0 1 4 6.5H2v3h2a.5.5 0 0 1 .312.11L6 10.96V5.04zm7.854.606a.5.5 0 0 1 0 .708L12.207 8l1.647 1.646a.5.5 0 0 1-.708.708L11.5 8.707l-1.646 1.647a.5.5 0 0 1-.708-.708L10.793 8 9.146 6.354a.5.5 0 1 1 .708-.708L11.5 7.293l1.646-1.647a.5.5 0 0 1 .708 0z"/>
@@ -327,6 +334,63 @@ window.electronAPI.onTabsReordered((tabIds) => {
 
 window.electronAPI.onThemeChanged((theme) => {
   document.body.dataset.theme = theme;
+});
+
+window.electronAPI.onTabColorChanged(({ id, color }) => {
+  const tabContainer = document.querySelector(`.tab-container[data-id="${id}"]`);
+  const sidebarTab = document.querySelector(`.sidebar-tab[data-id="${id}"]`);
+  
+  if (tabContainer) {
+    if (color) {
+      tabContainer.dataset.color = color;
+      const tab = tabContainer.querySelector('.tab');
+      if (tab) {
+        tab.style.backgroundColor = color;
+        tab.style.color = '#ffffff';
+      }
+      const title = tabContainer.querySelector('.title');
+      if (title) {
+        title.style.color = '#ffffff';
+      }
+      const muteIcon = tabContainer.querySelector('.mute-icon');
+      if (muteIcon) {
+        muteIcon.style.color = 'rgba(255, 255, 255, 0.8)';
+      }
+      const closeBtnPath = tabContainer.querySelector('.close-btn svg path');
+      if (closeBtnPath) {
+        closeBtnPath.style.fill = 'rgba(255, 255, 255, 0.8)';
+      }
+    } else {
+      delete tabContainer.dataset.color;
+      const tab = tabContainer.querySelector('.tab');
+      if (tab) {
+        tab.style.backgroundColor = '';
+        tab.style.color = '';
+      }
+      const title = tabContainer.querySelector('.title');
+      if (title) {
+        title.style.color = '';
+      }
+      const muteIcon = tabContainer.querySelector('.mute-icon');
+      if (muteIcon) {
+        muteIcon.style.color = '';
+      }
+      const closeBtnPath = tabContainer.querySelector('.close-btn svg path');
+      if (closeBtnPath) {
+        closeBtnPath.style.fill = '';
+      }
+    }
+  }
+  
+  if (sidebarTab) {
+    if (color) {
+      sidebarTab.style.backgroundColor = color;
+      sidebarTab.style.color = '#ffffff';
+    } else {
+      sidebarTab.style.backgroundColor = '';
+      sidebarTab.style.color = '';
+    }
+  }
 });
 
 window.addEventListener('resize', adjustTabWidths);

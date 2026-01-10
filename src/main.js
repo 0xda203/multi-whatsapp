@@ -19,13 +19,26 @@ const TAB_BAR_HEIGHT = 42;
 const dataPath = path.join(app.getPath('userData'), 'tabs.json');
 const settingsPath = path.join(app.getPath('userData'), 'settings.json');
 
+const TAB_COLORS = [
+  { name: 'Default', value: null },
+  { name: 'Red', value: '#dc2626' },
+  { name: 'Orange', value: '#ea580c' },
+  { name: 'Amber', value: '#d97706' },
+  { name: 'Green', value: '#16a34a' },
+  { name: 'Teal', value: '#0d9488' },
+  { name: 'Blue', value: '#2563eb' },
+  { name: 'Indigo', value: '#4f46e5' },
+  { name: 'Purple', value: '#9333ea' },
+  { name: 'Pink', value: '#db2777' }
+];
+
 function loadSavedData() {
   try {
     if (fs.existsSync(dataPath)) {
       const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
       if (Array.isArray(data)) {
         return {
-          tabs: data.map(t => ({ ...t, customName: false })),
+          tabs: data.map(t => ({ ...t, customName: false, color: t.color || null })),
           activeTabId: data[0]?.id || null
         };
       }
@@ -42,7 +55,8 @@ function saveData() {
       id: t.id,
       name: t.name,
       muted: t.muted,
-      customName: t.customName || false
+      customName: t.customName || false,
+      color: t.color || null
     }))
   };
   fs.writeFileSync(dataPath, JSON.stringify(data));
@@ -178,7 +192,7 @@ const createWindow = () => {
     }
 
     if (savedData.tabs.length > 0) {
-      savedData.tabs.forEach(t => createTab(t.id, t.name, t.muted, t.customName));
+      savedData.tabs.forEach(t => createTab(t.id, t.name, t.muted, t.customName, t.color));
     } else {
       createTab();
     }
@@ -203,7 +217,7 @@ const createWindow = () => {
   mainWindow.on('unmaximize', updateAllTabBounds);
 };
 
-function createTab(existingId = null, existingName = null, existingMuted = false, existingCustomName = false) {
+function createTab(existingId = null, existingName = null, existingMuted = false, existingCustomName = false, existingColor = null) {
   const tabId = existingId || Date.now();
   const tabName = existingName || `WhatsApp`;
 
@@ -253,7 +267,8 @@ function createTab(existingId = null, existingName = null, existingMuted = false
     name: tabName,
     unread: 0,
     muted: existingMuted,
-    customName: existingCustomName
+    customName: existingCustomName,
+    color: existingColor
   };
 
   tabs.push(tabData);
@@ -289,7 +304,7 @@ function createTab(existingId = null, existingName = null, existingMuted = false
   view.setAutoResize({ width: false, height: false });
   view.webContents.loadURL('https://web.whatsapp.com');
 
-  mainWindow.webContents.send('tab-created', { id: tabId, name: tabName, muted: existingMuted });
+  mainWindow.webContents.send('tab-created', { id: tabId, name: tabName, muted: existingMuted, color: existingColor });
 
   if (!activeTabId) {
     activeTabId = tabId;
@@ -371,6 +386,15 @@ function reorderTabs(fromIndex, toIndex) {
   mainWindow.webContents.send('tabs-reordered', tabs.map(t => t.id));
 }
 
+function changeTabColor(tabId, color) {
+  const tab = tabs.find(t => t.id === tabId);
+  if (tab) {
+    tab.color = color;
+    saveData();
+    mainWindow.webContents.send('tab-color-changed', { id: tabId, color });
+  }
+}
+
 ipcMain.on('update-badge', (_, dataUrl) => {
   if (!mainWindow) return;
 
@@ -404,6 +428,13 @@ ipcMain.on('show-context-menu', (event, tabId) => {
   const tab = tabs.find(t => t.id === tabId);
   if (!tab) return;
 
+  const colorSubmenu = TAB_COLORS.map(colorOption => ({
+    label: colorOption.name,
+    type: 'radio',
+    checked: tab.color === colorOption.value,
+    click: () => changeTabColor(tabId, colorOption.value)
+  }));
+
   const template = [
     { label: t('rename'), click: () => mainWindow.webContents.send('start-rename', tabId) },
     { label: t('refresh'), click: () => refreshTab(tabId) },
@@ -417,6 +448,10 @@ ipcMain.on('show-context-menu', (event, tabId) => {
         mainWindow.webContents.send('tab-muted', { id: tabId, muted: tab.muted });
         updateTotalUnread();
       }
+    },
+    { 
+      label: 'Change Color', 
+      submenu: colorSubmenu 
     },
     { label: t('clearSession'), click: () => clearTab(tabId) },
     { type: 'separator' },

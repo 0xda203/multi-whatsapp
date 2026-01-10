@@ -199,6 +199,33 @@ body {
   background-color: var(--bg-hover);
 }
 
+.tab-container[data-color]:not(.active) .tab {
+  opacity: 0.5;
+  transition: opacity 0.15s, background-color 0.15s;
+}
+
+.tab-container[data-color]:not(.active):hover .tab {
+  opacity: 0.7;
+}
+
+/* White indicator bar for ALL active tabs */
+.tab-container.active .tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 12px;
+  right: 12px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 2px 2px 0 0;
+  z-index: 10;
+}
+
+/* For light theme, use a darker indicator */
+body[data-theme="light"] .tab-container.active .tab::after {
+  background: rgba(66, 133, 244, 0.9);
+}
+
 .tab-container .round {
   z-index: 1;
   position: absolute;

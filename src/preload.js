@@ -27,4 +27,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onThemeChanged: (cb) => ipcRenderer.on('theme-changed', (_, theme) => cb(theme)),
   onStartRename: (cb) => ipcRenderer.on('start-rename', (_, id) => cb(id)),
   onDrawBadge: (cb) => ipcRenderer.on('draw-badge', (_, count) => cb(count)),
+  onTabColorChanged: (cb) => ipcRenderer.on('tab-color-changed', (_, data) => cb(data)),
 });
